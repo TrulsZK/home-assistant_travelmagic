@@ -1,0 +1,138 @@
+rest:
+  - resource: https://apiakt.travelplanner.no/scripts/TravelMagic/TravelMagicWE.dll/v1DepartureSearchXML?referrer=&lang=en&dep1=1&theme=&from=Kristiansand+rutebilstasjon+14+%28Kristiansand%29&to=&Time=10%3A45&Date=14.05.2023&now=1&direction=1&search=Search&adv=1&GetTR0=1&through=&throughpause=&changepenalty=1&changepause=0&linjer=&destinations=
+    scan_interval: 60
+    headers:
+      Content-Type: undefined
+    sensor:
+      - name: akt_rutebil_next_line
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[0]['@l'] }}
+      - name: akt_rutebil_next_destination
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[0]['@nd'] }}
+      - name: akt_rutebil_next_departure_raw
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[0]['@d2'] | default(value_json.result.departures.i[0]['@d']) %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ time_raw }}
+      - name: akt_rutebil_next_scheduled_departure_raw
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[0]['@d'] %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ time_raw }}
+      - name: akt_rutebil_next_departure
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[0]['@d2'] | default(value_json.result.departures.i[0]['@d']) %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ as_timestamp(time_raw) | timestamp_custom('%H:%M:%S') }}
+      - name: akt_rutebil_next_scheduled_departure
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[0]['@d'] %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ as_timestamp(time_raw) | timestamp_custom('%H:%M:%S') }}
+      - name: akt_rutebil_next_livedata
+        icon: "mdi:bus"
+        value_template: >
+          {% if value_json.result.departures.i[0]['@d2'] | default('No Data') == 'No Data' %}
+            {{ 'No Data' }}
+          {% else %}
+            {{ 'Data Available' }}
+          {% endif %}
+      - name: akt_rutebil_next_departure_min
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[0]['@d2'] | default(value_json.result.departures.i[0]['@d']) %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {% set expected_departure = as_timestamp(time_raw) %}
+          {% set now = as_timestamp(now()) %}
+          {% set delay_sec = expected_departure - now %}
+          {% set departure_min = (delay_sec // 60) | int %}
+          {{ departure_min }}
+      - name: akt_rutebil_next_delays_min
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time_expected = value_json.result.departures.i[0]['@d2'] | default(value_json.result.departures.i[0]['@d']) %}
+          {% set input_time_scheduled = value_json.result.departures.i[0]['@d'] %}
+          {% set time_raw_expected = strptime(input_time_expected, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {% set time_raw_scheduled = strptime(input_time_scheduled, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {% set expected_departure = as_timestamp(time_raw_expected) %}
+          {% set scheduled_departure = as_timestamp(time_raw_scheduled) %}
+          {% set delay_sec = expected_departure - scheduled_departure %}
+          {% set delay_min = (delay_sec // 60) | int %}
+          {{ delay_min }}
+      - name: akt_rutebil_next_occupancy
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[0]['@occupancy'] | default('No Data') }}
+      - name: akt_rutebil_following_line
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[1]['@l'] }}
+      - name: akt_rutebil_following_destination
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[1]['@nd'] }}
+      - name: akt_rutebil_following_departure_raw
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[1]['@d2'] | default(value_json.result.departures.i[1]['@d']) %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ time_raw }}
+      - name: akt_rutebil_following_scheduled_departure_raw
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[1]['@d'] %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ time_raw }}
+      - name: akt_rutebil_following_departure
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[1]['@d2'] | default(value_json.result.departures.i[1]['@d']) %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ as_timestamp(time_raw) | timestamp_custom('%H:%M:%S') }}
+      - name: akt_rutebil_following_scheduled_departure
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[1]['@d'] %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {{ as_timestamp(time_raw) | timestamp_custom('%H:%M:%S') }}
+      - name: akt_rutebil_following_livedata
+        icon: "mdi:bus"
+        value_template: >
+          {% if value_json.result.departures.i[1]['@d2'] | default('No Data') == 'No Data' %}
+            {{ 'No Data' }}
+          {% else %}
+            {{ 'Data Available' }}
+          {% endif %}
+      - name: akt_rutebil_following_departure_min
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time = value_json.result.departures.i[1]['@d2'] | default(value_json.result.departures.i[1]['@d']) %}
+          {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {% set expected_departure = as_timestamp(time_raw) %}
+          {% set now = as_timestamp(now()) %}
+          {% set delay_sec = expected_departure - now %}
+          {% set departure_min = (delay_sec // 60) | int %}
+          {{ departure_min }}
+      - name: akt_rutebil_following_delays_min
+        icon: "mdi:bus"
+        value_template: >
+          {% set input_time_expected = value_json.result.departures.i[1]['@d2'] | default(value_json.result.departures.i[1]['@d']) %}
+          {% set input_time_scheduled = value_json.result.departures.i[1]['@d'] %}
+          {% set time_raw_expected = strptime(input_time_expected, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {% set time_raw_scheduled = strptime(input_time_scheduled, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
+          {% set expected_departure = as_timestamp(time_raw_expected) %}
+          {% set scheduled_departure = as_timestamp(time_raw_scheduled) %}
+          {% set delay_sec = expected_departure - scheduled_departure %}
+          {% set delay_min = (delay_sec // 60) | int %}
+          {{ delay_min }}
+      - name: akt_rutebil_following_occupancy
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[1]['@occupancy'] | default('No Data') }}
