@@ -64,11 +64,20 @@ You will get an XML file with the following data (relevant parts)
 - `l` Line number
 - `nd` Route/destination
 - `c` Bus company name
+- `cancellation` value indicating the departure is cancelled
 - `d2` Expected departure time
 - `a2` Expected arrival time
 - `monitored` value indicating the departure is being monitored in real time
+- `incongestion` value indicating the departure is being in congestion
 - `lineref` ID of route
 - `occupancy` Indicator of seats available (ManySeatsAvailable, SeatsAvailable, StandingAvailable, Full)
+
+`fromnotes` element inside the `i` element contains additional notes about the departure
+
+`i` element (inside `fromnotes`) for each note for that departure with relevant data as attributes
+- `d` Description (or the note itself)
+- `st` Type e.g. `situation`
+- `sv` Severity e.g. `normal`
 
 See [configuration.yaml](configuration.yaml) for example config
 
@@ -81,9 +90,10 @@ The example gives info for the next `i[0]` and following `i[1]` departure
 - `akt_rutebil_next_scheduled_departure_raw` Scheduled departure in ISO 8601 format
 - `akt_rutebil_next_departure` Expected departure in format %H:%M:%S
 - `akt_rutebil_next_scheduled_departure` Scheduled departure in format %H:%M:%S
-- `akt_rutebil_next_livedata` If live data (expected departure is available) Data Available or No Data
+- `akt_rutebil_next_status` Status of the departure/live data `Cancelled`, `Congestion`, `Live Data`, or `Timetable` (if nothing else is available)
 - `akt_rutebil_next_departure_min` Number of minutes until expected departure (or scheduled departure if expected departure is not available)
 - `akt_rutebil_next_delays_min` Number of minutes delayed (0 if expected departure is not available)
+- `akt_rutebil_next_platform` Platform number or letter
 - `akt_rutebil_next_occupancy` Indicator of seats available (ManySeatsAvailable, SeatsAvailable, StandingAvailable, Full)
 - `akt_rutebil_following_xxx` same as above but for the following departure `i[1]` instead of `i[0]`
 

@@ -36,13 +36,17 @@ rest:
           {% set input_time = value_json.result.departures.i[0]['@d'] %}
           {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
           {{ as_timestamp(time_raw) | timestamp_custom('%H:%M:%S') }}
-      - name: akt_rutebil_next_livedata
+      - name: akt_rutebil_next_status
         icon: "mdi:bus"
         value_template: >
-          {% if value_json.result.departures.i[0]['@d2'] | default('No Data') == 'No Data' %}
-            {{ 'No Data' }}
+          {% if value_json.result.departures.i[0]['@cancellation'] | default('Running') != 'Running' %}
+            {{ 'Cancelled' }}
+          {% elif value_json.result.departures.i[0]['@incongestion'] | default('NoCongestion') != 'NoCongestion' %}
+            {{ 'Congestion' }}
+          {% elif value_json.result.departures.i[0]['@d2'] | default('NoData') != 'NoData' %}
+            {{ 'Live Data' }}
           {% else %}
-            {{ 'Data Available' }}
+            {{ 'Timetable' }}
           {% endif %}
       - name: akt_rutebil_next_departure_min
         icon: "mdi:bus"
@@ -66,6 +70,10 @@ rest:
           {% set delay_sec = expected_departure - scheduled_departure %}
           {% set delay_min = (delay_sec // 60) | int %}
           {{ delay_min }}
+      - name: akt_rutebil_next_platform
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[0]['@platform'] }}
       - name: akt_rutebil_next_occupancy
         icon: "mdi:bus"
         value_template: >
@@ -102,13 +110,17 @@ rest:
           {% set input_time = value_json.result.departures.i[1]['@d'] %}
           {% set time_raw = strptime(input_time, '%d.%m.%Y %H:%M:%S').strftime('%Y-%m-%dT%H:%M:%S') %}
           {{ as_timestamp(time_raw) | timestamp_custom('%H:%M:%S') }}
-      - name: akt_rutebil_following_livedata
+      - name: akt_rutebil_following_status
         icon: "mdi:bus"
         value_template: >
-          {% if value_json.result.departures.i[1]['@d2'] | default('No Data') == 'No Data' %}
-            {{ 'No Data' }}
+          {% if value_json.result.departures.i[1]['@cancellation'] | default('Running') != 'Running' %}
+            {{ 'Cancelled' }}
+          {% elif value_json.result.departures.i[1]['@incongestion'] | default('NoCongestion') != 'NoCongestion' %}
+            {{ 'Congestion' }}
+          {% elif value_json.result.departures.i[1]['@d2'] | default('NoData') != 'NoData' %}
+            {{ 'Live Data' }}
           {% else %}
-            {{ 'Data Available' }}
+            {{ 'Timetable' }}
           {% endif %}
       - name: akt_rutebil_following_departure_min
         icon: "mdi:bus"
@@ -132,6 +144,10 @@ rest:
           {% set delay_sec = expected_departure - scheduled_departure %}
           {% set delay_min = (delay_sec // 60) | int %}
           {{ delay_min }}
+      - name: akt_rutebil_following_platform
+        icon: "mdi:bus"
+        value_template: >
+          {{ value_json.result.departures.i[1]['@platform'] }}
       - name: akt_rutebil_following_occupancy
         icon: "mdi:bus"
         value_template: >

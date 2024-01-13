@@ -10,10 +10,12 @@ entities:
     name: Expected Departure
   - entity: sensor.akt_rutebil_next_scheduled_departure
     name: Scheduled Departure
-  - entity: sensor.akt_rutebil_next_livedata_raw
-    name: Live Data
+  - entity: sensor.akt_rutebil_next_status
+    name: Status
   - entity: sensor.akt_rutebil_next_delays_min
     name: Minutes Delayed
+  - entity: sensor.akt_rutebil_next_platform
+    name: Platform
   - entity: sensor.akt_rutebil_next_occupancy
     name: Occupancy
   - entity: sensor.akt_rutebil_following_line
@@ -26,10 +28,12 @@ entities:
     name: Expected Departure
   - entity: sensor.akt_rutebil_following_scheduled_departure
     name: Scheduled Departure
-  - entity: sensor.akt_rutebil_following_livedata_raw
-    name: Live Data
+  - entity: sensor.akt_rutebil_following_status
+    name: Status
   - entity: sensor.akt_rutebil_following_delays_min
     name: Minutes Delayed
+  - entity: sensor.akt_rutebil_following_platform
+    name: Platform
   - entity: sensor.akt_rutebil_following_occupancy
     name: Occupancy
 title: Kristiansand Rutebilstasjon
